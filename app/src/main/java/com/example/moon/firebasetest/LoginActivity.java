@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -51,16 +52,25 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
     private FirebaseAuth firebaseAuth;
     TextView textView;
+    //SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         firebaseAuth = FirebaseAuth.getInstance();
         textView = (TextView)findViewById(R.id.registration);
+      //  sharedPreferences = this.getSharedPreferences("LOGOPTION",MODE_PRIVATE);
+      //  boolean isLogin = sharedPreferences.getBoolean("isLogin",false);
+//
+//        if(isLogin){
+//            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+//            startActivity(intent);
+//        }
+
+
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -74,14 +84,20 @@ public class LoginActivity extends AppCompatActivity {
                 mEmailSignInButton.setVisibility(View.INVISIBLE);
                 String email = mEmailView.getText().toString();
                 String pass = mPasswordView.getText().toString();
-                     firebaseAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                     firebaseAuth.signInWithEmailAndPassword(email,pass)
+                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                          @Override
                          public void onComplete(@NonNull Task<AuthResult> task) {
                              if(task.isSuccessful()){
+//                                 SharedPreferences.Editor editor = sharedPreferences.edit();
+//                                 editor.putBoolean("isLogin",true);
+//                                 editor.apply();
+
                                  String Valid_email = firebaseAuth.getCurrentUser().getEmail();
                                  Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                                  intent.putExtra("user",Valid_email);
                                  startActivity(intent);
+
                              }else
                              {
                                  Toast.makeText(getApplicationContext(),"Not valid User",Toast.LENGTH_SHORT).show();
@@ -103,8 +119,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
 }

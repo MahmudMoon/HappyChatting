@@ -2,14 +2,18 @@ package com.example.moon.firebasetest;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -23,9 +27,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
@@ -40,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     MessageAdapter messageAdapter ;
     ProgressBar progressBar;
-
+    CircleImageView floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +59,14 @@ public class MainActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
         messageAdapter = new MessageAdapter(arrayList);
         progressBar = (ProgressBar)findViewById(R.id.progressbar);
+        floatingActionButton = (CircleImageView) findViewById(R.id.floatingActionButton);
+
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         final String user = intent.getStringExtra("user");
 
 
@@ -111,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                            if(user.equals(objectForUser.getEmail_())){
                                Current_User = objectForUser.getUserName_();
                                url = objectForUser.getDownloadUrl();
+                               Picasso.get().load(url).into(floatingActionButton);
                                Log.i("Current",Current_User);
                                break;
                            }
@@ -154,6 +164,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 = new Intent(MainActivity.this,Profile.class);
+                intent1.putExtra("User",Current_User);
+                startActivity(intent1);
+            }
+        });
     }
 
 
@@ -180,4 +200,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
 
     }
+
+
+
 }
